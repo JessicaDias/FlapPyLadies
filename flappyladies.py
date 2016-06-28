@@ -22,8 +22,10 @@ img_start = pygame.image.load('img/start.png')
 img_logo = pygame.image.load('img/logoPython.png')
 jump = pygame.mixer.Sound('sounds/jump.wav')
 hit = pygame.mixer.Sound('sounds/explode.wav')
-jump.set_volume(0.1)
-hit.set_volume(0.1)
+jump.set_volume(0.2)
+hit.set_volume(0.2)
+pygame.mixer.music.load('sounds/music.ogg')
+pygame.mixer.music.set_volume(0.05)
 
 # Funçoes para desenhar objetos na tela
 def player(player_area):
@@ -40,6 +42,9 @@ def score(points):
 
 # Funçao para exibir a introduçao
 def intro():
+    #Musica, parametro -1 é para tocar em loop
+    pygame.mixer.music.play(-1)
+    #Tela
     screen.fill([255, 255, 255])
     screen.blit(img_logo, [40, 300])
     screen.blit(img_start, [170, 50])
