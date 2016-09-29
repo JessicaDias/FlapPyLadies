@@ -27,11 +27,15 @@ hit.set_volume(0.1)
 
 # Funçoes para desenhar objetos na tela
 def player(player_area):
+    #pygame.draw.rect(screen, [0,0,0], player_area)
     screen.blit(img_player, player_area)
 
+#def wall(wallup, walldown):
 def wall():
-    screen.blit(img_wallup, [wallx_loc, wally - 500])
-    screen.blit(img_walldown, [wallx_loc, wally + dist])
+    #pygame.draw.rect(screen, [0,255,0], wallup)
+    #pygame.draw.rect(screen, [0,255,0], walldown)
+    screen.blit(img_wallup, [wall_locx, wall_alt - 500])
+    screen.blit(img_walldown, [wall_locx, wall_alt + dist])
 
 def score(points):
     font = pygame.font.Font('fonts/geo.ttf', 55)
@@ -53,11 +57,11 @@ close = False
 playerx = 350 # Posiçao inicial
 playery = 250
 # Velocidade inicial do jogador
-speed = 0
+speed = 5
 # Obstaculo
-wallx_loc = 700 #localizaçao
-wallx = 70 # tamanho
-wally = random.randint(0, 350)
+wall_locx = 700 #localizaçao
+wall_larg = 70 # tamanho
+wall_alt = random.randint(0, 350)
 dist = 150
 speedwall = 4
 up = 0
@@ -91,7 +95,8 @@ while not close:
             if event.key == pygame.K_SPACE:
                 speed = 5
 
-    # # # BACKGROUND # # #  
+    # # # BACKGROUND # # #
+    #screen.fill([255,255,255])
     screen.blit(img_bg1, (posImg, 0))
     screen.blit(img_bg2, (posImg + Img, 0))
     posImg -= 2 # Velocidade
@@ -108,22 +113,23 @@ while not close:
 
     # # # OBSTACULO # # #
     # Cria obstaculo
-    wallup = pygame.Rect(wallx_loc, 0, wallx, wally)
-    walldown = pygame.Rect(wallx_loc, int(wally + dist), wallx, wally + 500)
+    wallup = pygame.Rect(wall_locx, 0, wall_larg, wall_alt)
+    walldown = pygame.Rect(wall_locx, (wall_alt + dist), wall_larg, wall_alt + 500)
     # Desenha obstaculo
+    #wall(wallup, walldown)
     wall()
     # Decrementa a posição x do obstaculo 
-    wallx_loc -= speedwall
+    wall_locx -= speedwall
         # Cria mais obstaculos
-    if wallx_loc < -60:
-        wallx_loc = 700
-        wally = random.randint(0, 350)
+    if wall_locx < -60:
+        wall_locx = 700
+        wall_alt = random.randint(0, 350)
 
     # # # PONTUAÇÃO # # #
     # Desenha pontos
     score(points)
     # Conta pontos
-    if playerx == wallx_loc + 70:
+    if playerx == wall_locx + wall_larg:
         points += 1
 
     # # # COLISAO # # #
@@ -133,13 +139,7 @@ while not close:
         speedwall = 0
         gameover = True
 
-    if player_area.colliderect(wallup):
-        hit.play()
-        speed = 0
-        speedwall = 0
-        gameover = True
-
-    if player_area.colliderect(walldown):
+    if player_area.colliderect(wallup) or player_area.colliderect(walldown):
         hit.play()
         speed = 0
         speedwall = 0
@@ -166,9 +166,8 @@ while not close:
                     # Velocidade inicial do jogador
                     speed = 0
                     # Obstaculo
-                    wallx_loc = 700 #localizaçao
-                    wally_loc = 0
-                    wally = random.randint(0, 350)
+                    wall_locx = 700 #localizaçao
+                    wall_alt = random.randint(0, 350)
                     speedwall = 4
                     # Pontuaçao
                     points = 0
