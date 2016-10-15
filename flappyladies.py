@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import pygame
 import random
 
@@ -5,7 +7,7 @@ import random
 pygame.init()
 
 # Tamanho e nome da janela
-screen = pygame.display.set_mode([700,497])
+screen = pygame.display.set_mode([700, 497])
 pygame.display.set_caption("FlapPyLadies")
 
 # Frame por segundo
@@ -25,22 +27,26 @@ hit = pygame.mixer.Sound('sounds/explode.wav')
 jump.set_volume(0.1)
 hit.set_volume(0.1)
 
+
 # Funçoes para desenhar objetos na tela
 def player(player_area):
-    #pygame.draw.rect(screen, [0,0,0], player_area)
+    # pygame.draw.rect(screen, [0,0,0], player_area)
     screen.blit(img_player, player_area)
 
-#def wall(wallup, walldown):
+
+# def wall(wallup, walldown):
 def wall():
-    #pygame.draw.rect(screen, [0,255,0], wallup)
-    #pygame.draw.rect(screen, [0,255,0], walldown)
+    # pygame.draw.rect(screen, [0,255,0], wallup)
+    # pygame.draw.rect(screen, [0,255,0], walldown)
     screen.blit(img_wallup, [wall_locx, wall_alt - 500])
     screen.blit(img_walldown, [wall_locx, wall_alt + dist])
 
+
 def score(points):
     font = pygame.font.Font('fonts/geo.ttf', 55)
-    text = font.render(str(points), True, [255,255,255])
-    screen.blit(text, [350,20])
+    text = font.render(str(points), True, [255, 255, 255])
+    screen.blit(text, [350, 20])
+
 
 # Funçao para exibir a introduçao
 def intro():
@@ -54,13 +60,13 @@ def intro():
 # Janela esta aberta ou fechada
 close = False
 # Jogador
-playerx = 350 # Posiçao inicial
+playerx = 350  # Posiçao inicial
 playery = 250
 # Velocidade inicial do jogador
 speed = 5
 # Obstaculo
-wall_locx = 700 #localizaçao
-wall_larg = 70 # tamanho
+wall_locx = 700  # localizaçao
+wall_larg = 70  # tamanho
 wall_alt = random.randint(0, 350)
 dist = 150
 speedwall = 4
@@ -78,8 +84,8 @@ intro()
 
 # # # Loop do jogo # # #
 while not close:
-    
-    #Inicio FOR
+
+    # Inicio FOR
     # Reconhece eventos do jogador (mouse e teclado)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -96,11 +102,11 @@ while not close:
                 speed = 5
 
     # # # BACKGROUND # # #
-    #screen.fill([255,255,255])
+    # screen.fill([255,255,255])
     screen.blit(img_bg1, (posImg, 0))
     screen.blit(img_bg2, (posImg + Img, 0))
-    posImg -= 2 # Velocidade
-    if posImg * -1 == Img: #Recomeçar
+    posImg -= 2  # Velocidade
+    if posImg * -1 == Img:  # Recomeçar
         posImg = 0
 
     # # # JOGADOR # # #
@@ -114,13 +120,14 @@ while not close:
     # # # OBSTACULO # # #
     # Cria obstaculo
     wallup = pygame.Rect(wall_locx, 0, wall_larg, wall_alt)
-    walldown = pygame.Rect(wall_locx, (wall_alt + dist), wall_larg, wall_alt + 500)
+    walldown = pygame.Rect(wall_locx, (wall_alt + dist),
+                           wall_larg, wall_alt + 500)
     # Desenha obstaculo
-    #wall(wallup, walldown)
+    # wall(wallup, walldown)
     wall()
-    # Decrementa a posição x do obstaculo 
+    # Decrementa a posição x do obstaculo
     wall_locx -= speedwall
-        # Cria mais obstaculos
+    # Cria mais obstaculos
     if wall_locx < -60:
         wall_locx = 700
         wall_alt = random.randint(0, 350)
@@ -161,12 +168,12 @@ while not close:
                 # Aperta Tecla "espaço"
                 if event.key == pygame.K_SPACE:
                     # Jogador
-                    playerx = 350 # Posiçao inicial
+                    playerx = 350  # Posiçao inicial
                     playery = 250
                     # Velocidade inicial do jogador
                     speed = 0
                     # Obstaculo
-                    wall_locx = 700 #localizaçao
+                    wall_locx = 700  # localizaçao
                     wall_alt = random.randint(0, 350)
                     speedwall = 4
                     # Pontuaçao
@@ -175,11 +182,11 @@ while not close:
                     gameover = False
 
         # Imagem game over
-        screen.fill([255,255,255])
-        screen.blit(img_gameover, (175,20))
+        screen.fill([255, 255, 255])
+        screen.blit(img_gameover, (175, 20))
         font = pygame.font.Font('fonts/geo.ttf', 40)
-        text = font.render(str(points), True, [238,37,79])
-        screen.blit(text, [410,43])
+        text = font.render(str(points), True, [238, 37, 79])
+        screen.blit(text, [410, 43])
         pygame.display.flip()
 
 pygame.quit()

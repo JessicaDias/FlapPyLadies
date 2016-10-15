@@ -1,0 +1,4 @@
+pygame==1.9.2b8
+
+# dev
+flake8==3.0.4
