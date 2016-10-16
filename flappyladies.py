@@ -1,5 +1,11 @@
+# encoding: utf-8
 import pygame
 import random
+from score_manager import ScoreManager
+
+# Carregar arquivo de highscores
+score_manager = ScoreManager()
+score_manager.initialize()
 
 # Inicialização do pygame
 pygame.init()
@@ -37,10 +43,15 @@ def wall():
     screen.blit(img_wallup, [wall_locx, wall_alt - 500])
     screen.blit(img_walldown, [wall_locx, wall_alt + dist])
 
+
 def score(points):
     font = pygame.font.Font('fonts/geo.ttf', 55)
-    text = font.render(str(points), True, [255,255,255])
-    screen.blit(text, [350,20])
+    text = font.render("Score: " + str(points), True, [255, 255, 255])
+    highscores = font.render(
+        "Highest: " + str(score_manager.highscore), True, [255, 255, 255])
+    screen.blit(text, [40, 20])
+    screen.blit(highscores, [300, 20])
+
 
 # Funçao para exibir a introduçao
 def intro():
@@ -131,6 +142,7 @@ while not close:
     # Conta pontos
     if playerx == wall_locx + wall_larg:
         points += 1
+        score_manager.save_score(points)
 
     # # # COLISAO # # #
     if (playery > down or playery < up):
