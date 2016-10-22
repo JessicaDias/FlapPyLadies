@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import pygame
 import random
 
@@ -78,7 +80,7 @@ intro()
 
 # # # Loop do jogo # # #
 while not close:
-    
+
     #Inicio FOR
     # Reconhece eventos do jogador (mouse e teclado)
     for event in pygame.event.get():
@@ -118,7 +120,7 @@ while not close:
     # Desenha obstaculo
     #wall(wallup, walldown)
     wall()
-    # Decrementa a posição x do obstaculo 
+    # Decrementa a posição x do obstaculo
     wall_locx -= speedwall
         # Cria mais obstaculos
     if wall_locx < -60:
