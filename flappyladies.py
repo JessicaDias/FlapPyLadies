@@ -2,185 +2,181 @@
 import pygame
 import random
 
-# Inicialização do pygame
+# Initialize all imported pygame modules
 pygame.init()
 
-# Tamanho e nome da janela
-tela = pygame.display.set_mode([700,497])
+# Initialize a window for display
+screen = pygame.display.set_mode([700, 497])
 pygame.display.set_caption("FlapPyLadies")
 
-# Frame por segundo
+# Clock object to help track time
 clock = pygame.time.Clock()
 
-# Carrega imagens e efeitos sonoros
-img_jogador = pygame.image.load('img/player.png')
-img_obstaculo1 = pygame.image.load('img/img_obstaculo1.png')
-img_obstaculo2 = pygame.image.load('img/img_obstaculo2.png')
-img_fimDoJogo = pygame.image.load('img/gameover.png')
-img_fundo1 = pygame.image.load('img/bg.jpg')
-img_fundo2 = pygame.image.load('img/bg.jpg')
-img_inicio = pygame.image.load('img/start.png')
-img_logo = pygame.image.load('img/logoPython.png')
-pulo = pygame.mixer.Sound('sounds/jump.wav')
-colisao = pygame.mixer.Sound('sounds/explode.wav')
-pulo.set_volume(0.1)
-colisao.set_volume(0.1)
+# Load new image from a file
+img_player = pygame.image.load('img/player.png')
+img_upper_barrier = pygame.image.load('img/img_upper_barrier.png')
+img_lower_barrier = pygame.image.load('img/img_lower_barrier.png')
+img_game_over = pygame.image.load('img/game_over.png')
+img_background = pygame.image.load('img/bg.jpg')
+img_start = pygame.image.load('img/start.png')
+# Create a new Sound object from a file
+jump = pygame.mixer.Sound('sounds/jump.wav')
+jump.set_volume(0.1)
+collision = pygame.mixer.Sound('sounds/explode.wav')
+collision.set_volume(0.1)
 
-# Funçoes para desenhar objetos na tela
-def jogador(area_jogador):
-    #pygame.draw.rect(tela, [0,0,0], area_jogador)
-    tela.blit(img_jogador, area_jogador)
+# Window status
+close = False
+# Player initial position
+x_player = 350
+y_player = 250
+height_player = 0
+# Barrier dimension
+width_barrier = 70
+height_barrier = random.randint(0, 350)
+distance_barrier = 150
+# Barrier position and speed
+x_barrier = 700
+pos_upper_barrier = 0
+pos_lower_barrier = 450
+speed_barrier = 4
+# Score
+points = 0
+# Play again
+game_over = False
+# Background
+img_size = 1320
+img_initial_pos = 0
 
-#def obstaculos(obstaculo1, obstaculo2):
-def obstaculos():
-    #pygame.draw.rect(tela, [0,255,0], obstaculo1)
-    #pygame.draw.rect(tela, [0,255,0], obstaculo2)
-    tela.blit(img_obstaculo1, [x_obstaculo, altura_obstaculo - 500])
-    tela.blit(img_obstaculo2, [x_obstaculo, altura_obstaculo + espaco])
 
-def pontuacao(pontos):
-    font = pygame.font.Font('fonts/geo.ttf', 55)
-    text = font.render(str(pontos), True, [255,255,255])
-    tela.blit(text, [350,20])
+# Function to draw the player on screen
+def player(player_area):
+    # Draw one image onto another (source, dest)
+    screen.blit(img_player, player_area)
+# def player(player_area):
+    # Draw a rectangle (surface, color, rect)
+    # pygame.draw.rect(screen, [0,0,0], player_area)
 
-# Funçao para exibir a introduçao
-def intro():
-    tela.fill([255, 255, 255])
-    tela.blit(img_logo, [40, 300])
-    tela.blit(img_inicio, [170, 50])
+
+# Function to draw the barriers on screen
+def barriers():
+    screen.blit(img_upper_barrier, [x_barrier, height_barrier - 500])
+    screen.blit(img_lower_barrier, [x_barrier, height_barrier + distance_barrier])
+# def barriers(upper_barrier, lower_barrier):
+    # pygame.draw.rect(screen, [0,255,0], pos_upper_barrier)
+    # pygame.draw.rect(screen, [0,255,0], pos_lower_barrier)
+
+
+# Function to draw the points on screen
+def score(points):
+    # Create a new Font object from a file
+    point_font = pygame.font.Font('fonts/geo.ttf', 55)
+    # render(text, antialias (smooth edges), color)
+    text = point_font.render(str(points), True, [255, 255, 255])
+    # Draw text on screen
+    screen.blit(text, (350, 20))
+
+
+# Function to draw the intro on screen
+def intro_screen():
+    screen.blit(img_start, (0, 0))
     pygame.display.update()
     pygame.time.wait(2000)
 
-# # # VARIAVEIS # # #
-# Janela esta aberta ou fechada
-fechada = False
-# Jogador
-x_jogador = 350 # Posiçao inicial
-y_jogador = 250
-# Velocidade inicial do jogador
-velocidade_jogador = 0
-# Obstaculo
-x_obstaculo = 700 #localizaçao
-largura_obstaculo = 70
-altura_obstaculo = random.randint(0, 350)
-espaco = 150
-velocidade_obstaculo = 4
-cima_obstaculo = 0
-baixo_obstaculo = 450
-# Pontuaçao
-pontos = 0
-# Jogar novamente
-gameover = False
-# Imagem de fundo
-Img = 1320
-posImg = 0
 
-intro()
+# Function to draw the intro on screen
+def game_over_screen():
+    screen.blit(img_game_over, (0, 0))
+    font = pygame.font.Font('fonts/geo.ttf', 40)
+    text = font.render(str(points), True, [238, 37, 79])
+    screen.blit(text, (410, 79))
+    pygame.display.flip()
 
-# # # Loop do jogo # # #
-while not fechada:
-    
-    #Inicio FOR
-    # Reconhece eventos do jogador (mouse e teclado)
+
+intro_screen()
+
+# # # GAME LOOP # # #
+while not close:
+
+    # # # Player event recognition (keyboard) # # #
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            fechada = True
-            # Apertar uma tecla
-        if event.type == pygame.KEYDOWN:
-            # Aperta Tecla "espaço"
-            if event.key == pygame.K_SPACE:
-                pulo.play()
-                velocidade_jogador = -10
-            # Solta Tecla "espaço"
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_SPACE:
-                velocidade_jogador = 5
+            close = True
+        # Hit a key (key down event)
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            jump.play()
+            height_player = -10
+        # Release a key (key up event)
+        if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+            height_player = 5
 
-    # # # BACKGROUND # # #
-    #tela.fill([255,255,255])
-    tela.blit(img_fundo1, (posImg, 0))
-    tela.blit(img_fundo2, (posImg + Img, 0))
-    posImg -= 2 # Velocidade
-    if posImg * -1 == Img: #Recomeçar
-        posImg = 0
+    # # # Scrolling background # # #
+    # screen.fill([255,255,255])
+    screen.blit(img_background, (img_initial_pos, 0))
+    screen.blit(img_background, (img_initial_pos + img_size, 0))
+    # Background speed
+    img_initial_pos -= 2
+    # Scrolling loop
+    if img_initial_pos * -1 == img_size:
+        img_initial_pos = 0
 
-    # # # JOGADOR # # #
-    # Cria jogador (retangulo para colisao)
-    area_jogador = pygame.Rect(x_jogador, y_jogador, 45, 45)
-    # Desenha jogador
-    jogador(area_jogador)
-    # Aumenta +1 a posiçao y do jogador
-    y_jogador += velocidade_jogador
+    # # # Player # # #
+    # Object for storing rectangular coordinates: Rect(left, top, width, height)
+    player_area = pygame.Rect(x_player, y_player, 45, 45)
+    # Draw the player on screen
+    player(player_area)
+    # Increase +1 in y player position (player movement)
+    y_player += height_player
 
-    # # # OBSTACULO # # #
-    # Cria obstaculo
-    obstaculo1 = pygame.Rect(x_obstaculo, 0, largura_obstaculo, altura_obstaculo)
-    obstaculo2 = pygame.Rect(x_obstaculo, (altura_obstaculo + espaco), largura_obstaculo, altura_obstaculo + 500)
-    # Desenha obstaculo
-    #obstaculos(obstaculo1, obstaculo2)
-    obstaculos()
-    # Decrementa a posição x do obstaculo 
-    x_obstaculo -= velocidade_obstaculo
-    # Cria mais obstaculos
-    if x_obstaculo < -60:
-        x_obstaculo = 700
-        altura_obstaculo = random.randint(0, 350)
+    # # # Barriers # # #
+    upper_barrier = pygame.Rect(x_barrier, 0, width_barrier, height_barrier)
+    lower_barrier = pygame.Rect(x_barrier, (height_barrier + distance_barrier), width_barrier, height_barrier + 500)
+    # Draw the first barriers on screen
+    barriers()
+    # barriers(upper_barrier, lower_barrier)
+    # Decrease x barrier position (barrier movement)
+    x_barrier -= speed_barrier
+    # Draw the next barriers on screen
+    if x_barrier < -60:
+        x_barrier = 700
+        height_barrier = random.randint(0, 350)
 
-    # # # PONTUAÇÃO # # #
-    # Desenha pontos
-    pontuacao(pontos)
-    # Conta pontos
-    if x_jogador == x_obstaculo + largura_obstaculo:
-        pontos += 1
+    # # # Score # # #
+    # Draw the points
+    score(points)
+    # Points counter
+    if x_player == x_barrier + width_barrier:
+        points += 1
 
-    # # # COLISAO # # #
-    if (y_jogador > baixo_obstaculo or y_jogador < cima_obstaculo):
-        colisao.play()
-        velocidade_jogador = 0
-        velocidade_obstaculo = 0
-        gameover = True
+    # # # Collision # # #
+    if (y_player > pos_lower_barrier or y_player < pos_upper_barrier
+            or player_area.colliderect(upper_barrier) or player_area.colliderect(lower_barrier)):
+        collision.play()
+        height_player = 0
+        speed_barrier = 0
+        game_over = True
 
-    if area_jogador.colliderect(obstaculo1) or area_jogador.colliderect(obstaculo2):
-        colisao.play()
-        velocidade_jogador = 0
-        velocidade_obstaculo = 0
-        gameover = True
-
-    # Atualiza o fundo
+    # Update the full display Surface (background) to the screen
     pygame.display.flip()
+    # Update the clock (frames per second)
     clock.tick(60)
 
-    # # # JOGAR NOVAMENTE # # #
-    while gameover:
+    # # # Play again # # #
+    while game_over:
         pygame.time.wait(300)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                fechada = True
-                gameover = False
-            # Apertar uma tecla
-            if event.type == pygame.KEYDOWN:
-                # Aperta Tecla "espaço"
-                if event.key == pygame.K_SPACE:
-                    # Jogador
-                    x_jogador = 350 # Posiçao inicial
-                    y_jogador = 250
-                    # Velocidade inicial do jogador
-                    velocidade_jogador = 0
-                    # Obstaculo
-                    x_obstaculo = 700 #localizaçao
-                    altura_obstaculo = random.randint(0, 350)
-                    velocidade_obstaculo = 4
-                    # Pontuaçao
-                    pontos = 0
-                    # Jogar novamente
-                    gameover = False
-
-        # Imagem game over
-        tela.fill([255,255,255])
-        tela.blit(img_fimDoJogo, (175,20))
-        font = pygame.font.Font('fonts/geo.ttf', 40)
-        text = font.render(str(pontos), True, [238,37,79])
-        tela.blit(text, [410,43])
-        pygame.display.flip()
+                close = True
+                game_over = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                x_player = 350
+                y_player = 250
+                height_player = 0
+                x_barrier = 700
+                height_barrier = random.randint(0, 350)
+                speed_barrier = 4
+                points = 0
+                game_over = False
+        game_over_screen()
 
 pygame.quit()
