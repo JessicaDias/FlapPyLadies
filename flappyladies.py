@@ -55,7 +55,7 @@ def player(player_area):
     screen.blit(img_player, player_area)
 # def player(player_area):
     # Draw a rectangle (surface, color, rect)
-    # pygame.draw.rect(screen, [0,0,0], player_area)
+    # pygame.draw.rect(screen, [0, 0, 0], player_area)
 
 
 # Function to draw the barriers on screen
@@ -63,8 +63,8 @@ def barriers():
     screen.blit(img_upper_barrier, [x_barrier, height_barrier - 500])
     screen.blit(img_lower_barrier, [x_barrier, height_barrier + distance_barrier])
 # def barriers(upper_barrier, lower_barrier):
-    # pygame.draw.rect(screen, [0,255,0], pos_upper_barrier)
-    # pygame.draw.rect(screen, [0,255,0], pos_lower_barrier)
+    # pygame.draw.rect(screen, [0, 255, 0], upper_barrier)
+    # pygame.draw.rect(screen, [0, 255, 0], lower_barrier)
 
 
 # Function to draw the points on screen
@@ -111,7 +111,7 @@ while not close:
             height_player = 5
 
     # # # Scrolling background # # #
-    # screen.fill([255,255,255])
+    # screen.fill([255, 255, 255])
     screen.blit(img_background, (img_initial_pos, 0))
     screen.blit(img_background, (img_initial_pos + img_size, 0))
     # Background speed
